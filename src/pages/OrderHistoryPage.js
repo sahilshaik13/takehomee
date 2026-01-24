@@ -88,7 +88,7 @@ const OrderHistoryPage = () => {
           
           <div className="flex items-center gap-2">
             <ShoppingBag className="w-5 h-5 text-brand-blue" />
-            <span className="font-heading font-bold">SWAGDROP</span>
+            <span className="font-heading font-bold">TAKE-HOME</span>
           </div>
         </div>
       </header>

@@ -164,7 +164,7 @@ const CheckoutPage = () => {
           </Link>
           <div className="flex items-center gap-2">
             <ShoppingBag className="w-5 h-5 text-brand-blue" />
-            <span className="font-heading font-bold">SWAGDROP</span>
+            <span className="font-heading font-bold">TAKE-HOME</span>
           </div>
           <div className="text-right text-sm hidden sm:block">
             <span className="text-zinc-500">Logged in as </span>
@@ -400,7 +400,7 @@ const CheckoutPage = () => {
                 </button>
                 
                 <div className="flex items-center justify-center gap-2 text-xs text-zinc-400 pt-2">
-                  <CreditCard className="w-4 h-4" /> <span>Secure checkout powered by SwagDrop</span>
+                  <CreditCard className="w-4 h-4" /> <span>Secure checkout powered by TAKE-HOME</span>
                 </div>
               </div>
             </div>

@@ -116,7 +116,7 @@ const HomePage = () => {
         <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <ShoppingBag className="w-6 h-6 text-brand-blue" />
-            <span className="font-heading font-extrabold text-xl tracking-tight">SWAGDROP</span>
+            <span className="font-heading font-extrabold text-xl tracking-tight">TAKE-HOME</span>
           </div>
 
           <div className="flex items-center gap-4">
@@ -208,7 +208,7 @@ const HomePage = () => {
 
       <footer className="border-t border-zinc-100 mt-16">
         <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 py-8 flex flex-col md:flex-row items-center justify-between gap-4 text-zinc-400 text-sm">
-          <div className="flex items-center gap-2"><ShoppingBag className="w-4 h-4" /><span className="font-mono text-xs tracking-widest uppercase">SwagDrop 2025</span></div>
+          <div className="flex items-center gap-2"><ShoppingBag className="w-4 h-4" /><span className="font-mono text-xs tracking-widest uppercase">TAKE-HOME 2026</span></div>
           <p className="font-body">Your session key: <code className="text-xs bg-zinc-100 px-2 py-1 rounded font-mono">{user?.key?.slice(0, 8)}...</code></p>
         </div>
       </footer>
