@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Tag, Check, AlertCircle, Sparkles, Loader2, Clock, Users } from 'lucide-react';
+import { X, Tag, Check, AlertCircle, Sparkles, Loader2, Clock, Users, UserPlus } from 'lucide-react';
 import { formatPrice } from '../utils/priceUtils';
 import axios from 'axios';
 import { useUser } from '../context/UserContext'; 
@@ -49,17 +49,16 @@ const CouponModal = ({ isOpen, onClose, cartItems, onApplyCoupon }) => {
     }
   }, [isOpen, cartItems, analyzeCoupons]);
 
-  // 3. Apply Coupon Logic (Updated to pass rules)
+  // 3. Apply Coupon Logic
   const handleApply = (coupon) => {
     onApplyCoupon({
       code: coupon.code,
       description: coupon.description,
       discount_type: coupon.discount_type,
       discount_value: coupon.discount_value,
-      // --- CRITICAL UPDATES FOR DYNAMIC PRICING ---
       target_category: coupon.target_category || null, 
       min_order_value: coupon.min_order_value || 0,
-      savings: coupon.potential_savings // Initial value, recalculated by parent
+      savings: coupon.potential_savings 
     });
     onClose();
   };
@@ -170,7 +169,7 @@ const CouponModal = ({ isOpen, onClose, cartItems, onApplyCoupon }) => {
                           <div className="flex items-start justify-between gap-4">
                             {/* Left: Coupon Info */}
                             <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-1">
+                              <div className="flex items-center gap-2 mb-1 flex-wrap">
                                 <span className={`font-mono font-bold text-sm px-2 py-0.5 rounded ${
                                   coupon.is_applicable
                                     ? 'bg-emerald-100 text-emerald-700'
@@ -187,6 +186,21 @@ const CouponModal = ({ isOpen, onClose, cartItems, onApplyCoupon }) => {
                                     ${coupon.discount_value} off
                                   </span>
                                 )}
+                                
+                                {/* Category Badge */}
+                                {coupon.target_category && (
+                                   <span className="text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">
+                                      {coupon.target_category} Only
+                                   </span>
+                                )}
+
+                                {/* --- NEW: First Time Only Badge --- */}
+                                {coupon.first_time_only && (
+                                   <span className="text-[10px] font-bold uppercase tracking-wider bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded flex items-center gap-1">
+                                      <UserPlus className="w-3 h-3" /> New Users
+                                   </span>
+                                )}
+                                
                               </div>
                               <p className={`text-sm mb-2 ${
                                 coupon.is_applicable ? 'text-zinc-700' : 'text-zinc-500'

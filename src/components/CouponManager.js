@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { 
   Ticket, Plus, Trash2, Calendar, Users, 
-  CheckCircle2, X, Loader2, Save, Power, Edit2, User
+  CheckCircle2, X, Loader2, Save, Power, Edit2, User, Layers, Sparkles
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatPrice } from '../utils/priceUtils';
@@ -66,7 +66,8 @@ const CouponManager = () => {
       target_category: coupon.target_category || 'All',
       expiration_date: coupon.expiration_date ? coupon.expiration_date.split('T')[0] : '',
       usage_limit: coupon.usage_limit || '',
-      limit_per_user: coupon.limit_per_user || '', // New Field
+      limit_per_user: coupon.limit_per_user || '', 
+      first_time_only: coupon.first_time_only || false, // <--- LOAD VALUE
       is_active: coupon.is_active
     });
     setIsModalOpen(true);
@@ -83,12 +84,12 @@ const CouponManager = () => {
         min_order_value: formData.min_order_value ? parseFloat(formData.min_order_value) : null,
         target_category: formData.target_category === 'All' ? null : formData.target_category,
         usage_limit: formData.usage_limit ? parseInt(formData.usage_limit) : null,
-        limit_per_user: formData.limit_per_user ? parseInt(formData.limit_per_user) : null, // New Field
-        expiration_date: formData.expiration_date ? new Date(formData.expiration_date).toISOString() : null
+        limit_per_user: formData.limit_per_user ? parseInt(formData.limit_per_user) : null,
+        expiration_date: formData.expiration_date ? new Date(formData.expiration_date).toISOString() : null,
+        first_time_only: formData.first_time_only // <--- SEND TO BACKEND
       };
 
       if (editingId) {
-        // Send ALL fields for update now
         await axios.put(`${API}/admin/coupons/${editingId}`, payload);
       } else {
         await axios.post(`${API}/admin/coupons`, payload);
@@ -109,7 +110,9 @@ const CouponManager = () => {
     return {
       code: '', description: '', discount_type: 'percentage', discount_value: '',
       min_order_value: '', target_category: 'All', expiration_date: '', 
-      usage_limit: '', limit_per_user: '', is_active: true
+      usage_limit: '', limit_per_user: '', 
+      first_time_only: false, // <--- DEFAULT
+      is_active: true
     };
   }
 
@@ -162,6 +165,23 @@ const CouponManager = () => {
             </div>
 
             <div className="space-y-2 text-xs text-zinc-600 mb-6 bg-zinc-50 p-3 rounded-lg">
+              <div className="flex justify-between">
+                <span>Category:</span>
+                <span className={`font-bold ${coupon.target_category ? 'text-blue-600' : 'text-zinc-500'}`}>
+                  {coupon.target_category || 'Storewide'}
+                </span>
+              </div>
+              
+              {/* --- NEW: First Time Only Label --- */}
+              {coupon.first_time_only && (
+                <div className="flex justify-between">
+                   <span>Eligibility:</span>
+                   <span className="font-bold text-purple-600 flex items-center gap-1">
+                     <Sparkles className="w-3 h-3" /> New Users Only
+                   </span>
+                </div>
+              )}
+
               <div className="flex justify-between">
                 <span>Per User Limit:</span>
                 <span className="font-medium text-purple-600">
@@ -230,7 +250,7 @@ const CouponManager = () => {
 
               <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-5">
                 
-                {/* Core Info - NOW EDITABLE */}
+                {/* Core Info */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Coupon Code</label>
@@ -269,7 +289,7 @@ const CouponManager = () => {
                   />
                 </div>
 
-                {/* Discount Logic - NOW EDITABLE */}
+                {/* Discount Logic */}
                 <div className="bg-purple-50 p-4 rounded-lg border border-purple-100 grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-purple-700 uppercase mb-1">Type</label>
@@ -297,7 +317,7 @@ const CouponManager = () => {
                 {/* Constraints */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Global Limit (Total)</label>
+                    <label className="block text-xs font-bold text-zinc-500 uppercase mb-1">Global Limit</label>
                     <div className="relative">
                       <input 
                         type="number" min="1"
@@ -343,6 +363,32 @@ const CouponManager = () => {
                       value={formData.expiration_date}
                       onChange={e => setFormData({...formData, expiration_date: e.target.value})}
                     />
+                  </div>
+                </div>
+
+                {/* --- NEW CHECKBOX: FIRST TIME USERS ONLY --- */}
+                <div 
+                  className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-all ${
+                    formData.first_time_only 
+                      ? 'bg-purple-50 border-purple-200' 
+                      : 'bg-zinc-50 border-zinc-200 hover:bg-zinc-100'
+                  }`}
+                  onClick={() => setFormData({ ...formData, first_time_only: !formData.first_time_only })}
+                >
+                  <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${
+                    formData.first_time_only 
+                      ? 'bg-purple-600 border-purple-600' 
+                      : 'bg-white border-zinc-300'
+                  }`}>
+                    {formData.first_time_only && <CheckCircle2 className="w-3.5 h-3.5 text-white" />}
+                  </div>
+                  <div className="flex-1">
+                    <p className={`text-sm font-bold ${formData.first_time_only ? 'text-purple-900' : 'text-zinc-700'}`}>
+                      First-time customers only
+                    </p>
+                    <p className="text-xs text-zinc-500">
+                      Only valid for users with 0 previous orders
+                    </p>
                   </div>
                 </div>
 

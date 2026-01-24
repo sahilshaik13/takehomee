@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   Shield, LogOut, LayoutDashboard, PieChart, 
-  PackageOpen, Ticket, Calendar, Clock
+  PackageOpen, Ticket, Calendar
 } from 'lucide-react';
 
 // Import Components
@@ -11,6 +11,7 @@ import AdminOverview from '../../components/AdminOverview';
 import AdminAnalysis from '../../components/AdminAnalysis';
 import StockManager from '../../components/StockManager';
 import CouponManager from '../../components/CouponManager';
+import AdminChatBot from '../../components/AdminChatBot'; // <--- New Import
 
 const AdminDashboardPage = () => {
   const navigate = useNavigate();
@@ -68,9 +69,9 @@ const AdminDashboardPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-100 pb-20">
+    <div className="min-h-screen bg-zinc-100 pb-20 relative">
       {/* Header - Always Visible */}
-      <header className="bg-zinc-900 text-white sticky top-0 z-50 shadow-md">
+      <header className="bg-zinc-900 text-white sticky top-0 z-40 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
@@ -235,6 +236,9 @@ const AdminDashboardPage = () => {
         )}
 
       </main>
+
+      {/* --- CHATBOT FLOATING COMPONENT --- */}
+      <AdminChatBot />
     </div>
   );
 };
