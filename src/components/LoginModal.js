@@ -1,34 +1,49 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useUser } from '../context/UserContext';
-import { ShoppingBag, Sparkles, ArrowRight } from 'lucide-react';
+import { ShoppingBag, Sparkles, ArrowRight, Cookie, ShieldAlert, Check } from 'lucide-react';
 
 const LoginModal = ({ isOpen }) => {
   const [name, setName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasConsented, setHasConsented] = useState(false);
+  const [showConsentWarning, setShowConsentWarning] = useState(false);
+  
   const { login, error } = useUser();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name.trim() || isSubmitting) return;
 
+    // 1. Check Consent
+    if (!hasConsented) {
+      setShowConsentWarning(true);
+      return;
+    }
+
     setIsSubmitting(true);
     await login(name);
     setIsSubmitting(false);
   };
 
+  const handleAgree = () => {
+    setHasConsented(true);
+    setShowConsentWarning(false);
+  };
+
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {isOpen && (
         <motion.div
-          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           data-testid="login-modal-overlay"
         >
+          {/* --- MAIN MODAL CONTAINER --- */}
           <motion.div
-            className="bg-white/95 backdrop-blur-xl border border-zinc-200 shadow-2xl p-8 md:p-12 max-w-md w-full relative overflow-hidden"
+            className="bg-white/95 backdrop-blur-xl border border-zinc-200 shadow-2xl p-8 md:p-12 max-w-md w-full relative overflow-hidden rounded-2xl"
             initial={{ opacity: 0, y: 40, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
@@ -37,8 +52,44 @@ const LoginModal = ({ isOpen }) => {
           >
             {/* Decorative element */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-brand-blue/5 rounded-bl-full" />
-            
-            {/* Header */}
+
+            {/* --- CONSENT WARNING OVERLAY (The "Main Popup" if they tried to skip) --- */}
+            <AnimatePresence>
+              {showConsentWarning && (
+                <motion.div 
+                  className="absolute inset-0 z-20 bg-white/98 backdrop-blur-xl flex flex-col items-center justify-center p-8 text-center"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                >
+                  <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-6">
+                    <ShieldAlert className="w-8 h-8 text-red-500" />
+                  </div>
+                  <h3 className="font-heading font-bold text-2xl text-zinc-900 mb-2">
+                    Action Required
+                  </h3>
+                  <p className="text-zinc-500 text-sm mb-6 leading-relaxed">
+                    To provide you with a secure shopping session, we need to store a temporary key on your device. Without this permission, we cannot create your cart.
+                  </p>
+                  <div className="flex flex-col gap-3 w-full">
+                    <button
+                      onClick={handleAgree}
+                      className="w-full bg-brand-blue text-white py-3 rounded-full font-bold uppercase text-xs tracking-widest hover:bg-brand-blue/90 transition-colors"
+                    >
+                      I Agree & Continue
+                    </button>
+                    <button
+                      onClick={() => setShowConsentWarning(false)}
+                      className="w-full text-zinc-400 py-3 text-xs hover:text-zinc-600 font-medium"
+                    >
+                      Back
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* --- STANDARD LOGIN FORM --- */}
             <div className="relative mb-10">
               <motion.div
                 className="flex items-center gap-2 mb-6"
@@ -64,7 +115,6 @@ const LoginModal = ({ isOpen }) => {
               </motion.h2>
             </div>
 
-            {/* Form */}
             <motion.form
               onSubmit={handleSubmit}
               initial={{ opacity: 0, y: 20 }}
@@ -128,7 +178,6 @@ const LoginModal = ({ isOpen }) => {
               </button>
             </motion.form>
 
-            {/* Footer note */}
             <motion.p
               className="text-center text-zinc-400 text-xs mt-8 font-body"
               initial={{ opacity: 0 }}
@@ -138,6 +187,40 @@ const LoginModal = ({ isOpen }) => {
               No account needed. Just your name.
             </motion.p>
           </motion.div>
+
+          {/* --- BOTTOM LEFT CONSENT TOAST (The initial prompt) --- */}
+          <AnimatePresence>
+            {!hasConsented && !showConsentWarning && (
+              <motion.div
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50, scale: 0.9 }}
+                transition={{ delay: 0.5, type: 'spring' }}
+                className="fixed bottom-4 left-4 z-[60] max-w-[280px] md:max-w-sm bg-white border border-zinc-200 shadow-2xl p-4 rounded-xl flex flex-col gap-3"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-zinc-100 rounded-lg shrink-0">
+                    <Cookie className="w-5 h-5 text-zinc-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-sm text-zinc-900 mb-1">Session Rights</h4>
+                    <p className="text-xs text-zinc-500 leading-relaxed">
+                      We use local storage to save your cart items and session key. This is required to shop.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-2 justify-end mt-1">
+                  <button 
+                     onClick={handleAgree}
+                     className="bg-black text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-zinc-800 transition-colors flex items-center gap-2"
+                  >
+                    <Check className="w-3 h-3" />
+                    Agree & Proceed
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
       )}
     </AnimatePresence>
