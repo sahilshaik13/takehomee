@@ -1,0 +1,54 @@
+/* SwagDrop App Styles */
+
+.App {
+  min-height: 100vh;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f4f4f5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #a1a1aa;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #71717a;
+}
+
+/* Selection color */
+::selection {
+  background-color: #002FA7;
+  color: white;
+}
+
+/* Focus visible for accessibility */
+*:focus-visible {
+  outline: 2px solid #002FA7;
+  outline-offset: 2px;
+}
+
+/* Smooth transitions */
+* {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Animation override - don't apply transition to transform/opacity (handled by framer-motion) */
+[data-framer-component-type] {
+  transition: none !important;
+}
+
+/* Brand colors as CSS variables for easy access */
+:root {
+  --brand-blue: #002FA7;
+  --brand-red: #FF3B30;
+}
