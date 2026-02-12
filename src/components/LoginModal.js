@@ -185,6 +185,11 @@ const LoginModal = ({ isOpen }) => {
               transition={{ delay: 0.4 }}
             >
               No account needed. Just your name.
+              <br />
+              {/* --- ADDED NOTE HERE --- */}
+              <span className="block mt-2 opacity-50 font-mono tracking-wide">
+                Made by Mohammed Shaik Sahil
+              </span>
             </motion.p>
           </motion.div>
 
