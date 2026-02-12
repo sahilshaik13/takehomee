@@ -208,7 +208,16 @@ const HomePage = () => {
 
       <footer className="border-t border-zinc-100 mt-16">
         <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 py-8 flex flex-col md:flex-row items-center justify-between gap-4 text-zinc-400 text-sm">
-          <div className="flex items-center gap-2"><ShoppingBag className="w-4 h-4" /><span className="font-mono text-xs tracking-widest uppercase">TAKE-HOME 2026</span></div>
+          <div className="flex flex-col md:flex-row items-center gap-4">
+            <div className="flex items-center gap-2">
+              <ShoppingBag className="w-4 h-4" />
+              <span className="font-mono text-xs tracking-widest uppercase">TAKE-HOME 2026</span>
+            </div>
+            {/* --- ADDED CREDIT HERE --- */}
+            <span className="hidden md:block text-zinc-300">|</span>
+            <span className="font-mono text-xs text-zinc-500">Made by Mohammed Shaik Sahil</span>
+          </div>
+          
           <p className="font-body">Your session key: <code className="text-xs bg-zinc-100 px-2 py-1 rounded font-mono">{user?.key?.slice(0, 8)}...</code></p>
         </div>
       </footer>
